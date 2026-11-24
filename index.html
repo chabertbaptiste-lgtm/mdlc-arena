@@ -74,7 +74,7 @@ body.mobile #score{top:8px;right:8px;min-width:150px;font-size:12.5px;padding:5p
 body.mobile #hpw{left:50%;transform:translateX(-50%);bottom:8px;width:200px}
 body.mobile #ammo{right:calc(214px + env(safe-area-inset-right));bottom:14px;font-size:20px}
 body.mobile #weap{display:none}
-body.mobile #net2{top:96px;font-size:11px;max-width:46%}
+body.mobile #net2{top:96px;font-size:11px;max-width:46%;transition:opacity .6s;pointer-events:none}
 body.mobile #msg{font-size:22px;top:38%}body.mobile #msg small{font-size:14px}
 #rot{position:fixed;inset:0;z-index:40;background:#1C1713;display:none;align-items:center;justify-content:center;text-align:center;padding:30px;font-size:18px}
 </style></head><body>
@@ -106,7 +106,7 @@ body.mobile #msg{font-size:22px;top:38%}body.mobile #msg small{font-size:14px}
 <div id="net">Choisis une option pour commencer.</div>
 <div id="diag" class="mut" style="margin-top:6px;font-size:12.5px"></div>
 </div></div>
-<div class="ov" id="pause" style="display:none"><div class="box"><h1>Pause</h1><p>Clique sur Reprendre pour revenir dans la partie.</p><div class="row"><button id="resume">Reprendre</button><button class="sec" id="again">Nouvelle partie</button></div></div></div>
+<div class="ov" id="pause" style="display:none"><div class="box"><h1>Pause</h1><p class="mut" id="net3"></p><p>Clique sur Reprendre pour revenir dans la partie.</p><div class="row"><button id="resume">Reprendre</button><button class="sec" id="again">Nouvelle partie</button></div></div></div>
 <script>
 /**
  * @license
@@ -1255,7 +1255,7 @@ function spawn(){ const en = enemiesPos(); let best = SPAWN[0], bd = -1;
   me.x = best[0]; me.z = best[1]; me.feet = 0; me.vy = 0; me.hp = 100; me.alive = true; me.life++; me.prot = 1.5; me.root = 0; me.kx = 0; me.kz = 0; me.yaw = Math.atan2(me.x, me.z); me.pitch = 0; resetInv(); }
 
 // ---------- réseau
-function netTxt(t){ $("net").textContent = t; $("net2").textContent = t; }
+function netTxt(t){ $("net").textContent = t; const p = $("net3"); if (p) p.textContent = t; const n = $("net2"); if (n.textContent !== t){ n.textContent = t; if (MOBILE){ n.style.opacity = 1; clearTimeout(netTxt.h); netTxt.h = setTimeout(() => { n.style.opacity = 0; }, 4000); } } }
 function players(){ if (!room) return []; return room.peers().filter(p => p.kind === "viewer" && !p.sameTab && p.presence && Array.isArray(p.presence.p)); }
 function refreshNet(){ if (!room) return; const me_ = room.peers().find(p => p.sameTab); if (me_) myPeer = me_.peer; const n = players().length;
   netTxt(n ? "Partie " + CODE + " : " + (n + 1) + " joueurs, via " + room.via() + "." : "Code de la partie : " + CODE + ". En attente de l'adversaire… (" + diagTxt() + ")"); }
